@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="دورة C++ احترافية بالعربي — من الصفر حتى الاحتراف مع مشغّل كود تفاعلي واختبارات وخارطة طريق منظمة">
+<meta name="theme-color" content="#080b12">
+<title>CodePath C++ — دورة البرمجة الاحترافية</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+<!-- Styles -->
+<link rel="stylesheet" href="assets/css/main.css">
+
+<!-- PWA install prompt support -->
+<script>
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  deferredPrompt = e;
+  document.getElementById('pwa-btn')?.style.setProperty('display','flex');
+});
+</script>
+</head>
+<body>
+
+<!-- ─── BG ─── -->
+<div class="bg-canvas"></div>
+<div class="bg-grid"></div>
+
+<div class="app">
+
+<!-- ═══════════════════════════════════════
+     HEADER
+═══════════════════════════════════════ -->
+<header class="site-header">
+  <div class="nav-inner">
+    <!-- Logo -->
+    <div class="logo" onclick="navigate('roadmap')" style="cursor:pointer">
+      <div class="logo-mark">C++</div>
+      <span>CodePath</span>
+    </div>
+
+    <!-- Nav tabs -->
+    <nav class="nav-center">
+      <button class="nav-tab active" data-page="roadmap" onclick="navigate('roadmap')">
+        🗺 خارطة الطريق
+      </button>
+      <button class="nav-tab" data-page="quiz" onclick="navigate('quiz')">
+        🧠 الاختبارات
+      </button>
+      <button class="nav-tab" data-page="resources" onclick="navigate('resources')">
+        📚 المصادر
+      </button>
+    </nav>
+
+    <!-- Right actions -->
+    <div class="nav-right">
+      <button class="btn-login" id="login-btn" onclick="openAuth()">
+        🔑 تسجيل الدخول
+      </button>
+      <div class="user-avatar" id="user-avatar" style="display:none" onclick="openAuth()" title="حسابك"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🎓 مصادر مفتوحة · جامعات عالمية · 100% مجاني</div>
+    <h1>إتقان C++ من الصفر<br>حتى الاحتراف</h1>
+    <p class="hero-sub">
+      دورة منظمة ومنهجية تبني قاعدتك البرمجية الصلبة — شرح عربي مفصل،
+      مشغّل كود تفاعلي، اختبارات، ومشاريع حقيقية
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-n">7</div>
+        <div class="stat-l">مراحل تعليمية</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">40+</div>
+        <div class="stat-l">درس تفاعلي</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">10</div>
+        <div class="stat-l">اختبار تفاعلي</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">12</div>
+        <div class="stat-l">مصدر مجاني</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="navigate('roadmap')">
+        🚀 ابدأ رحلتك الآن
+      </button>
+      <button class="btn-outline" onclick="navigate('quiz')">
+        🧠 اختبر نفسك
+      </button>
+      <button class="btn-outline" id="pwa-btn" style="display:none" onclick="installPWA()">
+        📲 تثبيت التطبيق
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     MAIN
+═══════════════════════════════════════ -->
+<main class="container" style="padding-bottom:60px">
+
+  <!-- Progress Card -->
+  <div class="progress-card">
+    <div class="progress-header">
+      <div class="progress-label">📊 تقدمك الإجمالي</div>
+      <div class="progress-pct" id="total-pct">0%</div>
+    </div>
+    <div class="pbar-wrap">
+      <div class="pbar-fill" id="total-bar" style="width:0%"></div>
+    </div>
+    <div class="phase-bars" id="phase-bars"></div>
+    <div class="streak-row">
+      <span class="streak-label">🔥 نشاطك هذا الأسبوع:</span>
+      <div class="streak-days" id="streak-days"></div>
+    </div>
+  </div>
+
+  <!-- ─── PAGE: ROADMAP ─── -->
+  <div class="page active" id="page-roadmap">
+    <div class="section-head">
+      <div class="section-title">🗺 خارطة طريق C++</div>
+      <div class="section-desc">
+        اتبع المراحل بالترتيب — كل مرحلة تفتح بعد إكمال 60% من السابقة.
+        اضغط على الدرس لفتح الشرح الكامل ومشغّل الكود.
+      </div>
+    </div>
+    <div class="phases" id="phases-container"></div>
+  </div>
+
+  <!-- ─── PAGE: QUIZ ─── -->
+  <div class="page" id="page-quiz">
+    <div class="section-head">
+      <div class="section-title">🧠 اختبارات تفاعلية</div>
+      <div class="section-desc">اختبر فهمك بأسئلة متعددة المستويات — كل إجابة مع شرح مفصل.</div>
+    </div>
+
+    <!-- Score Bar -->
+    <div class="quiz-score-bar" style="margin-bottom:20px">
+      <div class="score-icon">🏆</div>
+      <div class="score-text">
+        <div class="score-num" id="quiz-score-num">0 / 10</div>
+        <div class="score-label" id="quiz-answered">لم تُجِب على أي سؤال بعد</div>
+      </div>
+      <button class="btn-outline" style="font-size:13px;padding:8px 14px" onclick="resetQuizzes()">🔄 إعادة الاختبارات</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="quiz-filters">
+      <button class="filter-btn active" data-filter="all" onclick="setQuizFilter('all')">📋 الكل</button>
+      <button class="filter-btn" data-filter="unanswered" onclick="setQuizFilter('unanswered')">○ لم تُجَب</button>
+      <button class="filter-btn" data-filter="wrong" onclick="setQuizFilter('wrong')">❌ خاطئة</button>
+    </div>
+
+    <div class="quiz-grid" id="quiz-grid"></div>
+  </div>
+
+  <!-- ─── PAGE: RESOURCES ─── -->
+  <div class="page" id="page-resources">
+    <div class="section-head">
+      <div class="section-title">📚 مصادر مفتوحة</div>
+      <div class="section-desc">أفضل المصادر المجانية من جامعات عالمية ومنصات برمجة موثوقة.</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="res-filters">
+      <button class="res-filter-btn filter-btn active" data-res-filter="all" onclick="setResFilter('all')">🌐 الكل</button>
+      <button class="res-filter-btn filter-btn" data-res-filter="university" onclick="setResFilter('university')">🎓 جامعات</button>
+      <button class="res-filter-btn filter-btn" data-res-filter="video" onclick="setResFilter('video')">▶️ فيديو</button>
+      <button class="res-filter-btn filter-btn" data-res-filter="practice" onclick="setResFilter('practice')">💪 تمارين</button>
+      <button class="res-filter-btn filter-btn" data-res-filter="reference" onclick="setResFilter('reference')">📋 مراجع</button>
+      <button class="res-filter-btn filter-btn" data-res-filter="competitive" onclick="setResFilter('competitive')">🏆 تنافسية</button>
+    </div>
+
+    <div class="res-grid" id="res-grid"></div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════
+     LESSON MODAL
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">عنوان الدرس</div>
+      <button class="modal-close" onclick="closeLesson()">✕</button>
+    </div>
+    <div class="modal-tabs" style="background:var(--surface)">
+      <button class="modal-tab active" data-modal-tab="content" onclick="switchModalTab('content')">📖 الشرح</button>
+      <button class="modal-tab" data-modal-tab="exercise" onclick="switchModalTab('exercise')">💻 التمرين</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Content Panel -->
+      <div class="modal-panel active" id="mpanel-content">
+        <div class="lesson-content" id="modal-content"></div>
+        <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)">
+          <button class="btn-primary" onclick="markLessonDone()" style="margin-left:10px">
+            ✅ أكملت هذا الدرس
+          </button>
+          <button class="btn-outline" onclick="switchModalTab('exercise')">
+            💻 انتقل للتمرين →
+          </button>
+        </div>
+      </div>
+
+      <!-- Exercise Panel -->
+      <div class="modal-panel" id="mpanel-exercise">
+        <div class="code-runner">
+          <div class="runner-header">
+            <div>
+              <div class="runner-title" id="modal-exercise-title">التمرين</div>
+              <div style="font-size:13px;color:var(--text2);margin-top:4px" id="modal-exercise-desc"></div>
+            </div>
+            <div class="runner-btns">
+              <button class="btn-reset" onclick="resetCode()">↺ إعادة</button>
+              <button class="btn-run" id="run-btn" onclick="runCode()">▶ تشغيل</button>
+            </div>
+          </div>
+
+          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:2px">
+            🔧 C++17 via Wandbox.org (مجاني — بدون حساب)
+          </div>
+
+          <textarea class="code-editor" id="code-editor" spellcheck="false" placeholder="اكتب كودك هنا..."></textarea>
+
+          <div>
+            <div class="output-label">// المخرجات</div>
+            <div class="output-box" id="output-box">// انقر "تشغيل" لتنفيذ الكود...</div>
+          </div>
+
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px">
+            <button class="btn-primary" onclick="markLessonDone()">✅ أكملت هذا الدرس</button>
+            <button class="btn-outline" onclick="closeLesson()">إغلاق</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     AUTH MODAL
+═══════════════════════════════════════ -->
+<div class="auth-modal" id="auth-modal" style="position:fixed">
+  <div class="auth-box" style="position:relative">
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+    <div class="auth-logo">
+      <div class="logo-mark" style="width:52px;height:52px;font-size:20px;margin:0 auto 12px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">C++</div>
+      <h2>أهلاً بك في CodePath</h2>
+      <p style="color:var(--text2);font-size:13px;margin-top:6px">سجّل دخولك لحفظ تقدمك على السحابة</p>
+    </div>
+
+    <!-- Google -->
+    <button class="auth-btn" onclick="loginGoogle()">
+      <svg width="20" height="20" viewBox="0 0 48 48">
+        <path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/>
+        <path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/>
+        <path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34A21.991 21.991 0 0 0 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/>
+        <path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/>
+      </svg>
+      تسجيل الدخول بـ Google
+    </button>
+
+    <!-- GitHub -->
+    <button class="auth-btn" onclick="loginGitHub()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+      </svg>
+      تسجيل الدخول بـ GitHub
+    </button>
+
+    <div class="auth-divider">أو</div>
+    <button class="auth-guest" onclick="loginGuest()">
+      👤 متابعة كزائر (التقدم يُحفظ محلياً)
+    </button>
+
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.6">
+      تسجيل الدخول يحفظ تقدمك على السحابة ويمكّنك من المتابعة من أي جهاز.
+      <br>لتفعيل Firebase أضف بيانات مشروعك في <code style="font-size:10px">assets/js/app.js</code>
+    </p>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer class="site-footer">
+  <p>🎓 CodePath C++ — جميع المصادر مفتوحة ومجانية</p>
+  <p style="margin-top:6px;font-size:11px;color:var(--text3)">
+    مشغّل الكود يعمل بـ <a href="https://wandbox.org" target="_blank">Wandbox.org</a> (GCC 13 · C++17)
+    · تثبيت على GitHub Pages مجاناً
+  </p>
+</footer>
+
+</div><!-- .app -->
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+// Reset quizzes
+function resetQuizzes() {
+  if (!confirm('هل تريد إعادة جميع الاختبارات؟')) return;
+  STATE.quizAnswers = {};
+  saveState();
+  renderQuizPage();
+  showToast('🔄 تمت إعادة الاختبارات', 'success');
+}
+
+// PWA install
+async function installPWA() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') showToast('📲 تم تثبيت التطبيق!', 'success');
+  deferredPrompt = null;
+}
+</script>
+
+<!-- Service Worker (PWA offline) -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
